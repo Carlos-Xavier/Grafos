@@ -68,7 +68,7 @@ void bellman_ford(int nv,edge e[],int src,int ne)
     print(nv,dis);
 }
 
-int main()
+void readGraphByFile()
 {
   edge e[MAX];
   ifstream myfile;
@@ -84,7 +84,14 @@ int main()
     while (getline(myfile,line))  {
       int x, y, w;
       stringstream ss(line);
-      ss >> x >> y >> w;
+
+      if (ss.str().length() > 4)
+        ss >> x >> y >> w;
+      else
+      {
+        ss >> x >> y;
+        w = 1;
+      }
 
       e[edges].src = static_cast<int> (x);
       e[edges].dest = static_cast<int> (y);
@@ -95,9 +102,70 @@ int main()
 
    myfile.close();
   }
-  
+
   /*Analisando a distância do vertice 1 aos demais*/
   int source = 1;
   bellman_ford(nv,e,source,ne);
+}
+
+void readGraph()
+{
+    edge e[MAX];
+    int nv,ne,wt,src,dest;
+    char character;
+    bool flag = true;
+
+    cout << "Insert vertices and edges: \n";
+    cin >> nv >> ne;
+
+    cout << "Do you want to include the weights? (y/n) \n";
+    cin >> character;
+
+    if (character == 'y')
+    {
+      cout << "Enter the pair of vertices and the weights (Example: x y w): \n";
+      for (int i = 0; i < ne; i++)
+      {
+        int x, y, w;
+        cin >> x >> y >> w;
+
+        e[i].src = static_cast<int> (x);
+        e[i].dest = static_cast<int> (y);
+        e[i].wt  = static_cast<int> (w);
+      }
+    }
+    else if (character == 'n')
+    {
+      cout << "Enter the pair of vertices (Example: x y): \n";
+      for (int i = 0; i < ne; i++)
+      {
+        int x, y;
+        cin >> x >> y;
+
+        e[i].src = static_cast<int> (x);
+        e[i].dest = static_cast<int> (y);
+        e[i].wt  = static_cast<int> (1);
+      }
+    }
+    else
+    {
+        cout << "Invalid Input \n";
+        flag = false;
+    }
+
+    if (flag)
+    {  
+      /*Analisando a distância do vertice 1 aos demais*/
+      int source = 1;
+      bellman_ford(nv,e,source,ne);
+    }
+}
+
+int main(int argc, char *argv[])
+{
+  if (argc > 1 && string(argv[1]) == "-f")
+    readGraphByFile();
+  else
+    readGraph();
   return 0;
 }
