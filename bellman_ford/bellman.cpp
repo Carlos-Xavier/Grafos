@@ -95,6 +95,7 @@ int main()
 
    myfile.close();
   }
+  
   /*Analisando a distância do vertice 1 aos demais*/
   int source = 1;
   bellman_ford(nv,e,source,ne);
