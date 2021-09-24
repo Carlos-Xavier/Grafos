@@ -2,6 +2,8 @@
 #include <vector>
 #include <algorithm> 
 #include <string.h> 
+#include <fstream>
+#include <bits/stdc++.h>
 using namespace std;
 
 class Edge
@@ -38,14 +40,14 @@ public:
 	}
 };
 
-class Grafo
+class Graph
 {
 	int V; 
 	vector<Edge> edges; 
 
 public:
 
-	Grafo(int V)
+	Graph(int V)
 	{
 		this->V = V;
 	}
@@ -112,21 +114,106 @@ public:
 	}
 };
 
+bool readGraphByFile(Graph &graph, string file)
+{
+    string line;
+    ifstream myfile;
+
+    myfile.open(file);
+    if (!myfile.is_open())
+    {
+        perror("Error open");
+        exit(EXIT_FAILURE);
+    }
+	if ( myfile.is_open() ) 
+    {
+		int nv,ne;
+        getline(myfile,line);
+        stringstream ss(line);
+        ss >> nv >> ne;
+
+		Graph graph_temp(nv);
+
+		while (getline(myfile, line))
+		{
+			int x, y, w;
+            stringstream ss(line);
+
+            if (ss.str().length() > 4)
+                ss >> x >> y >> w;
+            else
+            {
+                ss >> x >> y;
+                w = 1;
+            }
+			graph_temp.addEdge(x, y, w);
+		}
+		graph = graph_temp;
+	}
+
+    return true;
+}
+
+bool readGraph(Graph &graph)
+{
+	int nv,ne;
+	char character;
+
+	cout << "Insert vertices and edges: \n";
+	cin >> nv >> ne;
+
+	Graph graph_temp(nv);
+
+	cout << "Do you want to include the weights? (y/n) \n";
+    cin >> character;
+
+	if (character == 'y')
+    {
+        cout << "Enter the pair of vertices and the weights (Example: x y w): \n";
+		for (int i = 0; i < ne; i++)
+		{
+			int x, y, w;
+
+            cin >> x >> y >> w;
+
+            graph_temp.addEdge(x, y, w);
+		}
+    }
+    else if (character == 'n')
+    {
+        cout << "Enter the pair of vertices (Example: x y): \n";
+        for (int i = 0; i < ne; i++)
+		{
+			int x, y;
+
+            cin >> x >> y;
+
+            graph_temp.addEdge(x, y, 1);
+		}
+    }
+    else
+    {
+        cout << "Invalid Input \n";
+        return false;
+    }
+
+	graph = graph_temp;
+	return true;
+}
+
 int main(int argc, char *argv[])
 {
-	Grafo g(5); // grafo
+	Graph graph(1); // grafo
+	bool flag;
+
+	if (argc > 1 && string(argv[1]) == "-f")
+		flag = readGraphByFile(graph, argv[2]);
+	else
+		flag = readGraph(graph);
 	
-	// adiciona as edges
-	g.addEdge(0, 1, 2);
-	g.addEdge(1, 2, 3);
-	g.addEdge(1, 4, 5);
-	g.addEdge(2, 4, 7);
-	g.addEdge(0, 3, 6);
-    g.addEdge(2, 4, 7);
-	g.addEdge(1, 3, 8);
-    g.addEdge(3, 4, 9);
-	
-	g.kruskal(); // roda o algoritmo de Kruskal
+
+	if (flag)
+		graph.kruskal(); // roda o algoritmo de Kruskal
 	
 	return 0;
 }
