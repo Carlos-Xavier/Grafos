@@ -68,13 +68,20 @@ void bellman_ford(int nv,edge e[],int src,int ne)
     print(nv,dis);
 }
 
-void readGraphByFile()
+void readGraphByFile(string file)
 {
   edge e[MAX];
   ifstream myfile;
   int nv,ne,wt,src,edges,dest;
   string line;
-  myfile.open("input.txt");
+  cout << file << '\n';
+  
+  myfile.open(file);
+  if (!myfile.is_open())
+    {
+        perror("Error open");
+        exit(EXIT_FAILURE);
+    }
 
   if ( myfile.is_open() ) {
     getline(myfile,line);
@@ -164,7 +171,7 @@ void readGraph()
 int main(int argc, char *argv[])
 {
   if (argc > 1 && string(argv[1]) == "-f")
-    readGraphByFile();
+    readGraphByFile(argv[2]);
   else
     readGraph();
   return 0;
